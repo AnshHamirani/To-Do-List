@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="todo-container">
+        <h1>To-Do List</h1>
+        <input type="text" id="task-input" placeholder="Enter a new task...">
+        <button id="add-task-button">Add Task</button>
+        <ul id="task-list">
+        </ul>
+      </div>   
+</body>
+</html>
+<script>
+// Get references to DOM elements
+const addTaskButton = document.getElementById('add-task-button');
+const taskInput = document.getElementById('task-input');
+const taskList = document.getElementById('task-list');
+
+// Function to add a new task
+function addTask() {
+  const taskText = taskInput.value.trim();
+
+  if (taskText) {
+    const listItem = document.createElement('li');
+
+    // Task text element
+    const taskSpan = document.createElement('span');
+    taskSpan.textContent = taskText;
+    taskSpan.addEventListener('click', toggleTaskCompleted);
+    listItem.appendChild(taskSpan);
+
+    // Edit button
+    const editButton = document.createElement('button');
+    editButton.textContent = 'Edit';
+    editButton.className = 'edit';
+    editButton.addEventListener('click', () => editTask(taskSpan));
+    listItem.appendChild(editButton);
+
+    // Delete button
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Delete';
+    deleteButton.className = 'delete';
+    deleteButton.addEventListener('click', deleteTask);
+    listItem.appendChild(deleteButton);
+
+    taskList.appendChild(listItem);
+    taskInput.value = '';
+  } else {
+    alert('Please enter a task.');
+  }
+}
+
+// Function to toggle completed class
+function toggleTaskCompleted(event) {
+  event.target.classList.toggle('completed');
+}
+
+// Function to delete a task
+function deleteTask(event) {
+  const listItem = event.target.parentNode;
+  taskList.removeChild(listItem);
+}
+
+// Function to edit a task
+function editTask(taskSpan) {
+  // Create input field with current task text
+  const editInput = document.createElement('input');
+  editInput.type = 'text';
+  editInput.value = taskSpan.textContent;
+  editInput.className = 'edit-input';
+
+  // Replace the task text with the input field
+  taskSpan.replaceWith(editInput);
+  editInput.focus();
+
+  // Save the edited task on "Enter" or when input loses focus
+  editInput.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+      saveEditedTask(editInput, taskSpan);
+    }
+  });
+
+  editInput.addEventListener('blur', () => {
+    saveEditedTask(editInput, taskSpan);
+  });
+}
+
+// Function to save edited task
+function saveEditedTask(editInput, taskSpan) {
+  if (editInput.value.trim()) {
+    taskSpan.textContent = editInput.value.trim();
+    editInput.replaceWith(taskSpan);
+  } else {
+    alert('Task cannot be empty.');
+  }
+}
+
+// Event listener for the Add Task button
+addTaskButton.addEventListener('click', addTask);
+
+// Event listener to allow pressing "Enter" to add a task
+taskInput.addEventListener('keypress', function(event) {
+  if (event.key === 'Enter') {
+    addTask();
+  }
+});
+
+</script>
